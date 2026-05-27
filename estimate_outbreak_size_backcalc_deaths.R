@@ -1,24 +1,13 @@
-## implement Neil method
-
-# ttd_mean <- 11.37
-# ttd_sd <- 5.41
-# 
-# r <- 0.1
-# deaths <- 88
-# cfr <- 0.24
-# k <- 1000000
-
-estimate_outbreak_size_backcalc_deaths <- function(ttd_mean,
-                                                   ttd_sd,
+estimate_outbreak_size_backcalc_deaths <- function(#ttd_mean,
+                                                   #ttd_sd,
+                                                   alpha,
+                                                   beta,
                                                    cfr,
                                                    deaths,
                                                    r,
                                                    k){
   doubling_time <- log(2)/r
 
-  alpha <- epitrix::gamma_mucv2shapescale(mu = ttd_mean, cv = ttd_sd / ttd_mean)$shape
-  beta <- 1/epitrix::gamma_mucv2shapescale(mu = ttd_mean, cv = ttd_sd / ttd_mean)$scale
-  
   # raw estimate
   Nt <- (deaths/cfr) * (1 + (r/beta))^alpha
   
@@ -46,9 +35,7 @@ estimate_outbreak_size_backcalc_deaths <- function(ttd_mean,
       )
     ) 
 
-  return(data.frame("ttd_mean" = ttd_mean,
-                    "ttd_sd" = ttd_sd,
-                    "cfr" = cfr,
+  return(data.frame("cfr" = cfr,
                     "deaths" = deaths,
                     "r" = r,
                     "doubling_time" = doubling_time,
