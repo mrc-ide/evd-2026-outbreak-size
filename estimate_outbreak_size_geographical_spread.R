@@ -34,14 +34,15 @@ estimate_outbreak_size_geographical_spread <- function(imported_cases,
   effective_detection_window <- (1-1/((1+r/beta)^alpha))/r  ## as r->0 this tends to alpha3/beta3=mean of infection to outcome dist
   prob_travel_during_window <- effective_detection_window * passengers_per_day/population
    
-  
   exact_nb_central <- round(imported_cases / prob_travel_during_window) 
   exact_nb_CI <- qnbinom(c(0.025,0.975),imported_cases,prob_travel_during_window) + imported_cases
-
+  ##Small change (replacing exp(-r*w) with (1+r/beta3)^(-alpha3)
     corr_nb_central <- exact_nb_central * exp(-r * mean_incub_period)
     corr_nb_CI <- exact_nb_CI * exp(-r * mean_incub_period)
-
-    p_new <- prob_travel_during_window/(1-(1-prob_travel_during_window)*(1-exp(-r * mean_incub_period)))
+    
+    alpha3 <- 2.52 
+    beta3 <- 0.4
+    p_new <- prob_travel_during_window * (1 - (1+r/beta)^-alpha)/((1 - (1+r/beta3)^-alpha3))
     
     ## note that p_new -> prob_travel_during_window * exp(r * mean_incub_period) as prob_travel_during_window->0, as we want
     compound_nb_central <- round(imported_cases / p_new) 
